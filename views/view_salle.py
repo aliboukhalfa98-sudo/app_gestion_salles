@@ -57,19 +57,20 @@ class ViewSalle(ctk.CTk):
         self.cadreListe = ctk.CTkFrame(self, corner_radius=10)
         self.cadreListe.pack(pady=10, padx=10, fill="both", expand=True)
 
-        self.tree = ttk.Treeview(
+        self.treeList = ttk.Treeview(
             self.cadreListe,
             columns=("code", "libelle", "type", "capacite"),
             show="headings"
         )
-        self.tree.heading("code", text="Code")
-        self.tree.heading("libelle", text="Libellé")
-        self.tree.heading("type", text="Type")
-        self.tree.heading("capacite", text="Capacité")
+        self.treeList.heading("code", text="Code")
+        self.treeList.heading("libelle", text="Libellé")
+        self.treeList.heading("type", text="Type")
+        self.treeList.heading("capacite", text="Capacité")
 
-        self.tree.pack(fill="both", expand=True)
+        self.treeList.pack(fill="both", expand=True)
 
-        self.afficher_salles()
+
+        self.lister_salles()
 
     def ajouter_salle(self):
         try:
@@ -83,13 +84,14 @@ class ViewSalle(ctk.CTk):
 
             if ok:
                 messagebox.showinfo("Succès", msg)
+                self.lister_salles()
             else:
                 messagebox.showerror("Erreur", msg)
 
         except ValueError:
             messagebox.showerror("Erreur", "La capacité doit être un nombre entier")
 
-            self.afficher_salles()
+
 
     def modifier_salle(self):
         try:
@@ -104,13 +106,14 @@ class ViewSalle(ctk.CTk):
 
             if ok:
                 messagebox.showinfo("Succès", msg)
+                self.lister_salles()
             else:
                 messagebox.showerror("Erreur", msg)
 
         except ValueError:
             messagebox.showerror("Erreur", "La capacité doit être un nombre entier")
 
-            self.afficher_salles()
+
 
     def supprimer_salle(self):
         code = self.entry_code.get()
@@ -121,8 +124,8 @@ class ViewSalle(ctk.CTk):
 
         self.service_salle.supprimer_salle(code)
         messagebox.showinfo("Succès", "Salle supprimée avec succès")
+        self.lister_salles()
 
-        self.afficher_salles()
 
     def rechercher_salle(self):
         code = self.entry_code.get()
@@ -146,12 +149,8 @@ class ViewSalle(ctk.CTk):
         else:
             messagebox.showerror("Erreur", "Salle introuvable")
 
-    def afficher_salles(self):
-        for row in self.tree.get_children():
-            self.tree.delete(row)
-
-        salles = self.service_salle.recuperer_salles()
-
-        for s in salles:
-            self.tree.insert("", "end", values=(s.code, s.libelle, s.type, s.capacite))
-
+    def lister_salles(self):
+        self.treeList.delete(*self.treeList.get_children())
+        liste = self.service_salle.recuperer_salles()
+        for s in liste:
+            self.treeList.insert("", "end", values=(s.code, s.libelle, s.type, s.capacite))
