@@ -1,5 +1,7 @@
 import customtkinter as ctk
+from tkinter import messagebox
 from services.services_salle import ServiceSalle
+from models.salle import Salle
 
 class ViewSalle(ctk.CTk):
     def __init__(self):
@@ -38,7 +40,7 @@ class ViewSalle(ctk.CTk):
         self.cadreAction = ctk.CTkFrame(self, corner_radius=10)
         self.cadreAction.pack(pady=10, padx=10, fill="x")
 
-        self.btn_ajouter = ctk.CTkButton(self.cadreAction, text="Ajouter")
+        self.btn_ajouter = ctk.CTkButton(self.cadreAction, text="Ajouter", command=self.ajouter_salle)
         self.btn_ajouter.grid(row=0, column=0, padx=10, pady=10)
 
         self.btn_modifier = ctk.CTkButton(self.cadreAction, text="Modifier")
@@ -49,3 +51,23 @@ class ViewSalle(ctk.CTk):
 
         self.btn_rechercher = ctk.CTkButton(self.cadreAction, text="Rechercher")
         self.btn_rechercher.grid(row=0, column=3, padx=10, pady=10)
+
+    def ajouter_salle(self):
+        try:
+            salle = Salle(
+                self.entry_code.get(),
+                self.entry_libelle.get(),
+                self.entry_type.get(),
+                int(self.entry_capacite.get())
+            )
+            ok, msg = self.service_salle.ajouter_salle(salle)
+
+            if ok:
+                messagebox.showinfo("Succès", msg)
+            else:
+                messagebox.showerror("Erreur", msg)
+
+        except ValueError:
+            messagebox.showerror("Erreur", "La capacité doit être un nombre entier")
+
+
