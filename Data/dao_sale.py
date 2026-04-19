@@ -1,6 +1,8 @@
 import json
 import mysql.connector
 
+from models.salle import Salle
+
 class DataSalle:
     def get_connection(self):
         with open("Data/config.json", "r", encoding="utf-8") as f:
@@ -52,3 +54,19 @@ class DataSalle:
 
         curseur.close()
         connection.close()
+
+    def get_salle(self, code):
+        connection = self.get_connection()
+        curseur = connection.cursor()
+
+        requete = "SELECT code, libelle, type, capacite FROM salle WHERE code=%s"
+        curseur.execute(requete, (code,))
+
+        resultat = curseur.fetchone()
+
+        curseur.close()
+        connection.close()
+
+        if resultat:
+            return Salle(resultat[0], resultat[1], resultat[2], resultat[3])
+        return None
